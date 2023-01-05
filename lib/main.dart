@@ -96,19 +96,38 @@ class _MyHomePageState extends State<MyHomePage> {
         text: const Text("Home"),
         body: Tab(
           child: Scaffold(
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  const Text(
-                    'You have pushed the button this many times:',
-                  ),
-                  Text(
-                    '$_counter',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-                ],
-              ),
+            body: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Text(
+                  'Recent save files',
+                  style: Theme.of(context).textTheme.headline4
+                ),
+                FutureBuilder(
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      final data = snapshot.data!;
+                      if (data.recentSaves.isEmpty) {
+                        return Text(
+                          "No recent save files to show",
+                          style: Theme.of(context).textTheme.subtitle1,
+                        );
+                      } else {
+                        return Expanded(
+                          child: ListView(
+                            children: data.recentSaves.map((x) => Text(x)).toList(),
+                          )
+                        );
+                      }
+                    } else if (snapshot.hasError) {
+                      return const Text("Could not load recent saves list");
+                    } else {
+                      return const Text("Loading recent saves list");
+                    }
+                  },
+                  future: _data,
+                ),
+              ],
             ),
             floatingActionButton: FloatingActionButton(
               onPressed: _incrementCounter,
